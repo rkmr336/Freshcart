@@ -1,36 +1,27 @@
 import Link from "next/link";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <div className="py-16 sm:py-24 text-center max-w-md mx-auto space-y-5">
-      <div className="w-24 h-24 rounded-full bg-emerald-50 text-5xl flex items-center justify-center mx-auto shadow-inner">
-        🥬
-      </div>
-      <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900">
-        Product Not Found
+    <div className="py-24 text-center max-w-md mx-auto space-y-4">
+      <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">
+        404 Not Found
+      </span>
+      <h1 className="text-2xl font-semibold tracking-tight text-zinc-950">
+        Product Unavailable
       </h1>
-      <p className="text-sm text-gray-600 leading-relaxed">
-        The grocery item you are looking for might have been moved, seasonal
-        produce that ended, or the link is incorrect.
+      <p className="text-xs text-zinc-500 leading-relaxed font-normal">
+        The piece you requested could not be found or has been archived from the collection.
       </p>
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+      <div className="pt-2">
         <Link
           href="/products"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 text-white font-bold text-xs px-5 py-3 rounded-xl hover:bg-emerald-700 transition-colors shadow-sm min-h-[44px]"
+          className="inline-flex items-center justify-center gap-2 bg-zinc-950 text-white font-medium text-xs px-5 py-2.5 rounded-lg hover:bg-zinc-800 transition-colors"
         >
-          <Search className="w-4 h-4" />
-          <span>Browse All Groceries</span>
-        </Link>
-        <Link
-          href="/"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 font-bold text-xs px-5 py-3 rounded-xl hover:bg-gray-50 transition-colors min-h-[44px]"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back to Home</span>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Browse All Pieces</span>
         </Link>
       </div>
     </div>
   );
 }
-

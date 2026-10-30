@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   Truck,
   RotateCcw,
-  CheckCircle2,
+  Check,
   ChevronRight,
   Share2,
 } from "lucide-react";
@@ -35,261 +35,340 @@ export default function ProductDetailView({
   const { showToast } = useToast();
 
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product.sizes && product.sizes.length > 0 ? product.sizes[0] : ""
+  );
+  const [selectedColor, setSelectedColor] = useState<string>(
+    product.colors && product.colors.length > 0 ? product.colors[0].name : ""
+  );
+  const [activeImage, setActiveImage] = useState<string>(product.image);
 
-  const cartQuantity = getItemQuantity(product.id);
+  const cartQuantity = getItemQuantity(product.id, selectedSize, selectedColor);
   const isWishlisted = isInWishlist(product.id);
   const discountPercent = getDiscountPercentage(product.price, product.mrp);
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(product, quantity, selectedSize, selectedColor);
   };
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
-      showToast("Link copied to clipboard!", "info");
+      showToast("Link copied to clipboard", "info");
     }
   };
 
+  const allImages = [
+    product.image,
+    ...(product.gallery || []).filter((g) => g !== product.image),
+  ];
+
   return (
     <div className="space-y-12">
-      {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
-        <Link href="/" className="hover:text-emerald-700">
+      {/* Breadcrumb Navigation */}
+      <nav className="flex items-center gap-2 text-xs text-zinc-400 font-normal">
+        <Link href="/" className="hover:text-zinc-900 transition-colors">
           Home
         </Link>
-        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-        <Link href="/products" className="hover:text-emerald-700">
-          Groceries
+        <ChevronRight className="w-3.5 h-3.5" />
+        <Link href="/products" className="hover:text-zinc-900 transition-colors">
+          Catalog
         </Link>
-        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+        <ChevronRight className="w-3.5 h-3.5" />
         <Link
           href={`/products?category=${product.categorySlug}`}
-          className="hover:text-emerald-700"
+          className="hover:text-zinc-900 transition-colors"
         >
           {product.category}
         </Link>
-        <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-        <span className="text-gray-900 font-semibold truncate max-w-[200px]">
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-zinc-800 truncate max-w-[200px]">
           {product.name}
         </span>
       </nav>
 
-      {/* Main Product Showcase */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
-        {/* Left: Large Emoji Tile Artwork */}
-        <div className="relative rounded-3xl bg-gradient-to-b from-emerald-50 via-emerald-100/40 to-white border border-emerald-100 p-8 sm:p-14 flex items-center justify-center aspect-square shadow-sm select-none">
-          {discountPercent > 0 && (
-            <span className="absolute top-4 left-4 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm">
-              {discountPercent}% OFF MRP
-            </span>
+      {/* Main Product Presentation */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        {/* Left Column: Image Gallery (7 cols on lg) */}
+        <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-4">
+          {/* Thumbnails */}
+          {allImages.length > 1 && (
+            <div className="flex sm:flex-col gap-2.5 overflow-x-auto sm:overflow-y-auto sm:max-h-[640px] shrink-0">
+              {allImages.map((img, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveImage(img)}
+                  className={`w-16 h-20 sm:w-20 sm:h-24 rounded-lg overflow-hidden border transition-all shrink-0 ${
+                    activeImage === img
+                      ? "border-zinc-900 ring-1 ring-zinc-900"
+                      : "border-zinc-200 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`${product.name} view ${idx + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
           )}
 
-          <button
-            type="button"
-            onClick={handleShare}
-            className="absolute top-4 right-4 p-2.5 rounded-full bg-white text-gray-500 hover:text-emerald-700 shadow-sm border border-gray-100 transition-colors"
-            title="Share product link"
-            aria-label="Share product"
-          >
-            <Share2 className="w-4 h-4" />
-          </button>
+          {/* Primary View */}
+          <div className="relative flex-1 aspect-4/5 bg-zinc-100 rounded-2xl overflow-hidden border border-zinc-200/80">
+            {product.badge && (
+              <span className="absolute top-4 left-4 z-10 bg-zinc-950/90 text-white text-[10px] tracking-wider uppercase font-medium px-2.5 py-1 rounded backdrop-blur-xs">
+                {product.badge}
+              </span>
+            )}
 
-          <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-3xl bg-white shadow-xl border border-emerald-100 flex items-center justify-center text-8xl sm:text-9xl drop-shadow-md">
-            {product.emoji}
-          </div>
+            <button
+              type="button"
+              onClick={handleShare}
+              className="absolute top-4 right-4 z-10 p-2.5 rounded-full bg-white/80 hover:bg-white text-zinc-600 hover:text-zinc-950 backdrop-blur-xs transition-colors shadow-xs"
+              title="Share"
+              aria-label="Share product"
+            >
+              <Share2 className="w-4 h-4" />
+            </button>
 
-          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-xs text-emerald-800 bg-white/80 backdrop-blur-md px-4 py-2 rounded-xl border border-emerald-100">
-            <span className="font-semibold">Harvested within 24 hrs</span>
-            <span className="font-bold">Organic Certified</span>
+            <img
+              src={activeImage}
+              alt={product.name}
+              className="w-full h-full object-cover object-center"
+            />
           </div>
         </div>
 
-        {/* Right: Product Details & Buying Control */}
-        <div className="space-y-6">
+        {/* Right Column: Buying Area (5 cols on lg) */}
+        <div className="lg:col-span-5 space-y-6">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-bold px-2.5 py-1 rounded-md">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
                 {product.category}
               </span>
-              <span className="text-xs text-gray-500 font-medium">
-                Unit: {product.unit}
-              </span>
+              {product.rating > 0 && (
+                <div className="flex items-center gap-1.5 text-xs text-zinc-600">
+                  <Star className="w-3.5 h-3.5 fill-zinc-900 text-zinc-900" />
+                  <span className="font-medium text-zinc-900">{product.rating}</span>
+                  <span className="text-zinc-400">({product.reviewCount} verified reviews)</span>
+                </div>
+              )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight leading-snug">
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-950 leading-tight">
               {product.name}
             </h1>
 
-            {/* Rating & Reviews */}
-            <div className="flex items-center gap-3 mt-3">
-              <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md text-xs font-bold text-amber-800">
-                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                <span>{product.rating}</span>
-              </div>
-              <span className="text-xs text-gray-500 font-medium">
-                ({product.reviewCount} verified consumer ratings)
-              </span>
-              <span className="text-xs text-emerald-700 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> 100% Quality Assured
-              </span>
-            </div>
-          </div>
-
-          {/* Price Block */}
-          <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 space-y-1">
-            <div className="flex items-baseline gap-3">
-              <span className="text-3xl font-black text-emerald-950">
+            {/* Price Row */}
+            <div className="flex items-baseline gap-3 mt-3">
+              <span className="text-2xl font-semibold text-zinc-950">
                 {formatPrice(product.price)}
               </span>
               {product.mrp > product.price && (
-                <span className="text-base text-gray-400 line-through">
-                  MRP {formatPrice(product.mrp)}
+                <span className="text-sm text-zinc-400 line-through">
+                  {formatPrice(product.mrp)}
                 </span>
               )}
               {discountPercent > 0 && (
-                <span className="text-xs font-extrabold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-md">
-                  Save {formatPrice(product.mrp - product.price)}
+                <span className="text-xs font-medium text-zinc-700 bg-zinc-100 px-2 py-0.5 rounded">
+                  Save {discountPercent}%
                 </span>
               )}
             </div>
-            <p className="text-xs text-gray-500">
-              Inclusive of all taxes &bull; Standard packaging
+            <p className="text-[11px] text-zinc-400 mt-1">
+              Taxes included. Free standard shipping on orders above ₹1,499.
             </p>
           </div>
 
-          {/* Stock Status */}
-          <div className="flex items-center gap-2">
-            <span
-              className={`w-2.5 h-2.5 rounded-full ${
-                product.inStock ? "bg-emerald-600 animate-pulse" : "bg-red-500"
-              }`}
-            />
-            <span className="text-xs font-bold uppercase tracking-wider">
-              {product.inStock ? (
-                <span className="text-emerald-700">In Stock (Ready for Dispatch)</span>
-              ) : (
-                <span className="text-red-600">Currently Out of Stock</span>
-              )}
-            </span>
-          </div>
+          {/* Color Selector */}
+          {product.colors && product.colors.length > 0 && (
+            <div className="space-y-2.5 pt-2">
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-zinc-900">
+                  Color: <strong className="font-semibold">{selectedColor}</strong>
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                {product.colors.map((c) => (
+                  <button
+                    key={c.name}
+                    type="button"
+                    onClick={() => {
+                      setSelectedColor(c.name);
+                    }}
+                    className={`group relative flex items-center gap-2 p-1.5 pr-3 rounded-lg border text-xs transition-all ${
+                      selectedColor === c.name
+                        ? "border-zinc-950 bg-zinc-50 font-medium"
+                        : "border-zinc-200 hover:border-zinc-300"
+                    }`}
+                  >
+                    <span
+                      className="w-4 h-4 rounded-full border border-zinc-200"
+                      style={{ backgroundColor: c.hex }}
+                    />
+                    <span>{c.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
-          {/* Action Row */}
+          {/* Size Selector */}
+          {product.sizes && product.sizes.length > 0 && (
+            <div className="space-y-2.5 pt-1">
+              <div className="flex justify-between text-xs">
+                <span className="font-medium text-zinc-900">
+                  Select Size: <strong className="font-semibold">{selectedSize}</strong>
+                </span>
+                <span className="text-zinc-400 text-[11px]">True to size</span>
+              </div>
+              <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                {product.sizes.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSelectedSize(s)}
+                    className={`py-2.5 text-xs font-medium rounded-lg border transition-all text-center ${
+                      selectedSize === s
+                        ? "border-zinc-950 bg-zinc-950 text-white"
+                        : "border-zinc-200 text-zinc-800 hover:border-zinc-400"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Quantity & Add to Cart Controls */}
           {product.inStock ? (
-            <div className="space-y-4 pt-2">
+            <div className="space-y-3 pt-2">
               <div className="flex items-center gap-3">
-                <span className="text-xs font-bold text-gray-700">Quantity:</span>
+                <span className="text-xs font-medium text-zinc-600">Quantity</span>
                 <QuantityStepper
                   quantity={quantity}
                   onIncrease={() => setQuantity((q) => q + 1)}
                   onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
                   size="md"
                 />
-                <span className="text-xs text-gray-400">
-                  Total: {formatPrice(product.price * quantity)}
-                </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold py-3.5 px-6 rounded-2xl shadow-sm shadow-emerald-700/20 text-sm transition-all min-h-[44px]"
+                  className="flex-1 flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 active:scale-98 text-white font-medium py-3.5 px-6 rounded-xl text-xs sm:text-sm transition-all min-h-[44px]"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   <span>
                     {cartQuantity > 0
-                      ? `Add More to Cart (${cartQuantity} already in cart)`
-                      : "Add to Cart"}
+                      ? `Add More to Bag (${cartQuantity} added)`
+                      : `Add to Bag • ${formatPrice(product.price * quantity)}`}
                   </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => toggleWishlist(product)}
-                  className={`flex items-center justify-center gap-2 py-3.5 px-5 rounded-2xl border font-bold text-sm transition-all min-h-[44px] ${
+                  className={`p-3.5 rounded-xl border flex items-center justify-center transition-colors min-h-[44px] ${
                     isWishlisted
-                      ? "border-red-200 bg-red-50 text-red-600"
-                      : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                      ? "border-zinc-950 bg-zinc-100 text-zinc-950"
+                      : "border-zinc-200 hover:border-zinc-300 text-zinc-600"
                   }`}
                   aria-label="Wishlist"
                 >
                   <Heart
                     className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`}
                   />
-                  <span>{isWishlisted ? "Wishlisted" : "Save"}</span>
                 </button>
               </div>
             </div>
           ) : (
-            <div className="p-4 rounded-2xl bg-gray-100 text-gray-600 text-xs font-medium space-y-2">
-              <p className="font-bold text-gray-800">
-                This product is temporarily sold out.
-              </p>
+            <div className="p-4 rounded-xl bg-zinc-100 text-zinc-600 text-xs space-y-2">
+              <p className="font-semibold text-zinc-900">Item Currently Unavailable</p>
               <p>
-                Our fresh procurement team is restocking fresh batches. You can save this to your wishlist to get notified when available.
+                This batch is completely spoken for. Add to wishlist to receive restocking updates.
               </p>
               <button
                 type="button"
                 onClick={() => toggleWishlist(product)}
-                className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-300 font-bold text-xs text-gray-800 hover:bg-gray-50 min-h-[44px]"
+                className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-zinc-300 text-zinc-900 font-medium text-xs hover:bg-zinc-50"
               >
-                <Heart className={`w-4 h-4 ${isWishlisted ? "text-red-500 fill-current" : ""}`} />
-                <span>{isWishlisted ? "Saved in Wishlist" : "Notify Me via Wishlist"}</span>
+                <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-current" : ""}`} />
+                <span>{isWishlisted ? "Saved in Wishlist" : "Notify via Wishlist"}</span>
               </button>
             </div>
           )}
 
-          {/* Description */}
-          <div className="pt-4 border-t border-gray-100 space-y-2">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">
-              Product Description
-            </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {product.description}
-            </p>
-            <div className="flex flex-wrap gap-1.5 pt-2">
-              {product.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md"
-                >
-                  #{tag}
-                </span>
-              ))}
+          {/* Description & Technical Details */}
+          <div className="pt-6 border-t border-zinc-200 space-y-4 text-xs">
+            <div>
+              <h3 className="font-semibold uppercase tracking-wider text-[11px] text-zinc-900 mb-2">
+                Overview
+              </h3>
+              <p className="text-zinc-600 leading-relaxed text-sm">
+                {product.description}
+              </p>
             </div>
+
+            {product.details && product.details.length > 0 && (
+              <div>
+                <h4 className="font-semibold uppercase tracking-wider text-[11px] text-zinc-900 mb-2">
+                  Key Specifications
+                </h4>
+                <ul className="space-y-1.5 text-zinc-600">
+                  {product.details.map((detail, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <Check className="w-3.5 h-3.5 text-zinc-900 shrink-0 mt-0.5" />
+                      <span>{detail}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
-          {/* Service Promises */}
-          <div className="grid grid-cols-3 gap-3 pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <Truck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>30 Mins Delivery</span>
+          {/* Quality Guarantees */}
+          <div className="grid grid-cols-3 gap-3 pt-6 border-t border-zinc-200 text-center">
+            <div className="p-3 bg-zinc-50 rounded-xl space-y-1">
+              <Truck className="w-4 h-4 text-zinc-700 mx-auto" />
+              <p className="text-[11px] font-semibold text-zinc-900">Tracked Shipping</p>
+              <p className="text-[10px] text-zinc-400">Doorstep delivery in 3-5 days</p>
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>100% Pure & Fresh</span>
+            <div className="p-3 bg-zinc-50 rounded-xl space-y-1">
+              <ShieldCheck className="w-4 h-4 text-zinc-700 mx-auto" />
+              <p className="text-[11px] font-semibold text-zinc-900">Premium Quality</p>
+              <p className="text-[10px] text-zinc-400">Strict standard inspection</p>
             </div>
-            <div className="flex items-center gap-2 text-xs text-gray-600">
-              <RotateCcw className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>Instant Refund</span>
+            <div className="p-3 bg-zinc-50 rounded-xl space-y-1">
+              <RotateCcw className="w-4 h-4 text-zinc-700 mx-auto" />
+              <p className="text-[11px] font-semibold text-zinc-900">7-Day Exchanges</p>
+              <p className="text-[10px] text-zinc-400">Hassle-free return policy</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Similar Products Row */}
+      {/* Similar Products Recommendation */}
       {similarProducts.length > 0 && (
-        <div className="pt-10 border-t border-gray-200 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Similar Groceries in {product.category}
-            </h2>
+        <div className="pt-16 border-t border-zinc-200 space-y-6">
+          <div className="flex items-baseline justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-zinc-900 tracking-tight">
+                Complete The Look
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Hand-selected complementary pieces from our {product.category} collection
+              </p>
+            </div>
             <Link
               href={`/products?category=${product.categorySlug}`}
-              className="text-xs sm:text-sm font-bold text-emerald-700 hover:underline"
+              className="text-xs font-medium text-zinc-900 hover:text-zinc-600 transition-colors"
             >
-              See all in {product.category} &rarr;
+              Explore Category &rarr;
             </Link>
           </div>
 
@@ -303,4 +382,3 @@ export default function ProductDetailView({
     </div>
   );
 }
-

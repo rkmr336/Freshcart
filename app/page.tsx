@@ -4,10 +4,9 @@ import {
   ArrowRight,
   ShieldCheck,
   Truck,
-  Percent,
   RotateCcw,
   Sparkles,
-  ShoppingBag,
+  Award,
 } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { CATEGORIES } from "@/data/categories";
@@ -16,168 +15,219 @@ import ProductCard from "@/components/ProductCard";
 export default function HomePage() {
   const featuredProducts = PRODUCTS.filter((p) => p.isFeatured).slice(0, 8);
   const bestSellers = PRODUCTS.filter((p) => p.isBestSeller).slice(0, 8);
+  const newArrivals = PRODUCTS.filter((p) => p.isNewArrival).slice(0, 4);
 
   return (
-    <div className="space-y-12 sm:space-y-16">
-      {/* Hero Banner */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-900 text-white p-6 sm:p-10 lg:p-14 shadow-lg shadow-emerald-900/15">
-        <div className="relative z-10 max-w-2xl space-y-4 sm:space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md text-emerald-100 text-xs sm:text-sm font-semibold border border-white/20">
-            <Sparkles className="w-4 h-4 text-amber-300" />
-            <span>Farm Harvest To Your Doorstep</span>
+    <div className="space-y-16 sm:space-y-24">
+      {/* Minimal Hero Section */}
+      <section className="relative overflow-hidden rounded-2xl bg-zinc-950 text-white min-h-[480px] sm:min-h-[540px] flex items-center">
+        {/* Subtle Background Image with Dark Vignette */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1800&q=80"
+            alt="Atelier Lifestyle & Fashion"
+            className="w-full h-full object-cover object-center opacity-30 scale-102"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/80 to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-2xl p-6 sm:p-12 lg:p-16 space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-zinc-300 text-xs font-normal border border-white/10">
+            <Sparkles className="w-3.5 h-3.5 text-zinc-300" />
+            <span>Autumn / Winter 2026 Release</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15]">
-            Fresh Groceries, <br />
-            <span className="text-amber-300">Delivered in 30 Mins.</span>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.1] text-white">
+            Quiet Luxury. <br />
+            <span className="text-zinc-400">Engineered for Daily Living.</span>
           </h1>
 
-          <p className="text-emerald-100 text-sm sm:text-lg max-w-lg leading-relaxed">
-            Premium organic vegetables, seasonal fruits, dairy & pantry staples.
-            Zero adulteration, hygienic packaging, guaranteed fresh.
+          <p className="text-zinc-300 text-sm sm:text-base max-w-lg leading-relaxed font-normal">
+            Heavyweight combed cotton essentials, clean architectural tailoring,
+            minimalist timepieces, and functional everyday lifestyle accessories.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               href="/products"
-              className="inline-flex items-center justify-center gap-2 bg-white text-emerald-900 font-bold px-6 py-3.5 rounded-2xl hover:bg-emerald-50 active:scale-95 transition-all text-sm sm:text-base shadow-sm min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 bg-white text-zinc-950 font-medium px-6 py-3 rounded-xl hover:bg-zinc-200 active:scale-98 transition-all text-xs sm:text-sm min-h-[44px]"
             >
-              <ShoppingBag className="w-4 h-4" />
-              <span>Shop All Groceries</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
+              <span>Explore Collection</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
 
             <Link
-              href="/products?category=fruits"
-              className="inline-flex items-center justify-center gap-2 bg-emerald-800/80 hover:bg-emerald-800 border border-emerald-500/40 text-emerald-50 font-semibold px-5 py-3.5 rounded-2xl transition-all text-sm sm:text-base min-h-[44px]"
+              href="/products?category=hoodies-sweats"
+              className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 border border-white/15 text-white font-medium px-5 py-3 rounded-xl transition-all text-xs sm:text-sm backdrop-blur-xs min-h-[44px]"
             >
-              <span>Explore Fruits &bull; From ₹48</span>
+              <span>460 GSM Hoodies</span>
             </Link>
           </div>
 
-          <div className="pt-2 flex items-center gap-6 text-xs text-emerald-200">
-            <div className="flex items-center gap-1.5">
-              <span className="text-amber-300 font-bold">★ 4.8/5</span>
-              <span>(12,000+ Happy Families)</span>
-            </div>
-            <div className="hidden sm:inline">&bull;</div>
-            <div className="hidden sm:inline">100% Contactless Delivery</div>
+          <div className="pt-4 flex items-center gap-6 text-[11px] text-zinc-400">
+            <span>Direct dropshipping logistics</span>
+            <span>&bull;</span>
+            <span>Worldwide verified partners</span>
+            <span>&bull;</span>
+            <span>7-day return guarantee</span>
           </div>
-        </div>
-
-        {/* Decorative Floating Emoji Artwork */}
-        <div
-          className="absolute -right-10 -bottom-10 lg:right-4 lg:bottom-4 opacity-30 lg:opacity-90 pointer-events-none select-none text-8xl sm:text-9xl lg:text-[140px] drop-shadow-2xl animate-pulse"
-          style={{ animationDuration: "6s" }}
-        >
-          🥑
         </div>
       </section>
 
-      {/* Category Grid Section */}
-      <section className="space-y-5">
-        <div className="flex items-end justify-between">
+      {/* Featured Collections / Categories */}
+      <section className="space-y-6">
+        <div className="flex items-baseline justify-between border-b border-zinc-200 pb-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Shop by Category
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950">
+              Curated Collections
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500">
-              Handpicked categories for your everyday household cooking
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Refined cuts, tactile fabrics, and considered accessories
             </p>
           </div>
           <Link
             href="/products"
-            className="text-xs sm:text-sm font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group"
+            className="text-xs font-medium text-zinc-900 hover:text-zinc-500 flex items-center gap-1 transition-colors"
           >
-            <span>View All</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <span>All Collections</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
           {CATEGORIES.map((cat) => (
             <Link
               key={cat.id}
               href={`/products?category=${cat.slug}`}
-              className="group flex flex-col items-center text-center p-3 sm:p-4 rounded-2xl bg-white border border-emerald-100 hover:border-emerald-300 shadow-2xs hover:shadow-md transition-all duration-200"
+              className="group relative flex flex-col rounded-xl overflow-hidden bg-zinc-900 aspect-3/4"
             >
-              <div className="w-14 h-14 rounded-2xl bg-emerald-50/70 group-hover:bg-emerald-100 flex items-center justify-center text-3xl mb-2 transition-transform group-hover:scale-110">
-                {cat.icon}
+              <img
+                src={cat.image}
+                alt={cat.name}
+                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-104 transition-all duration-500 ease-out"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute inset-x-3 bottom-3 text-white">
+                <span className="text-[10px] tracking-widest uppercase font-medium text-zinc-300 block mb-0.5">
+                  Collection
+                </span>
+                <h3 className="text-sm font-semibold tracking-tight leading-tight">
+                  {cat.name}
+                </h3>
               </div>
-              <span className="text-xs font-bold text-gray-800 group-hover:text-emerald-700 transition-colors line-clamp-1">
-                {cat.name}
-              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Promotional Offers Banner Row */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 text-white flex items-center justify-between shadow-sm">
-          <div className="space-y-1.5 max-w-[70%]">
-            <span className="bg-white/20 text-white text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
-              Limited Offer
-            </span>
-            <h3 className="text-lg sm:text-xl font-bold">
-              Flat 10% Extra Off on Checkout
-            </h3>
-            <p className="text-xs text-amber-100">
-              Use code <strong className="underline tracking-wider font-extrabold text-white">FRESH10</strong> on any basket above ₹499!
+      {/* Trending & Best Sellers Section */}
+      <section className="space-y-6">
+        <div className="flex items-baseline justify-between border-b border-zinc-200 pb-3">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950">
+              Trending Pieces
+            </h2>
+            <p className="text-xs text-zinc-500 mt-0.5">
+              The most requested apparel and everyday carry essentials this week
             </p>
-            <div className="pt-2">
-              <Link
-                href="/products"
-                className="inline-block bg-white text-amber-900 font-bold text-xs px-3.5 py-2 rounded-xl hover:bg-amber-50 transition-colors"
-              >
-                Claim Offer
-              </Link>
-            </div>
           </div>
-          <div className="text-5xl sm:text-6xl select-none">🎁</div>
+          <Link
+            href="/products?sort=rating-desc"
+            className="text-xs font-medium text-zinc-900 hover:text-zinc-500 flex items-center gap-1 transition-colors"
+          >
+            <span>Highest Rated</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-emerald-700 to-teal-800 text-white flex items-center justify-between shadow-sm">
-          <div className="space-y-1.5 max-w-[70%]">
-            <span className="bg-white/20 text-white text-[11px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider">
-              Organic Season
-            </span>
-            <h3 className="text-lg sm:text-xl font-bold">
-              Farm Fresh Himachal Apples
-            </h3>
-            <p className="text-xs text-emerald-100">
-              Crispy & naturally sweetened Shimla apples harvested this morning.
-            </p>
-            <div className="pt-2">
-              <Link
-                href="/products/fresh-shimla-apple"
-                className="inline-block bg-white text-emerald-950 font-bold text-xs px-3.5 py-2 rounded-xl hover:bg-emerald-50 transition-colors"
-              >
-                Buy Now &bull; ₹180/kg
-              </Link>
-            </div>
-          </div>
-          <div className="text-5xl sm:text-6xl select-none">🍎</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          {bestSellers.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="space-y-5">
-        <div className="flex items-end justify-between">
+      {/* Elegant Promotional Banner */}
+      <section className="relative rounded-2xl bg-zinc-100 border border-zinc-200/80 p-8 sm:p-12 overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="space-y-3 max-w-lg z-10">
+          <span className="text-[11px] uppercase tracking-widest font-semibold text-zinc-500">
+            Private Release
+          </span>
+          <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-950">
+            Welcome To The Studio.
+          </h3>
+          <p className="text-xs sm:text-sm text-zinc-600 leading-relaxed font-normal">
+            Enjoy 10% complimentary deduction across our entire dropshipping catalog with code{" "}
+            <strong className="text-zinc-950 font-semibold underline decoration-zinc-400">STUDIO10</strong> on checkout.
+          </p>
+          <div className="pt-2">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 bg-zinc-950 text-white text-xs font-medium px-5 py-2.5 rounded-lg hover:bg-zinc-800 transition-colors"
+            >
+              <span>Shop The Drop</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="relative w-full md:w-80 aspect-4/3 rounded-xl overflow-hidden shadow-xs border border-zinc-200">
+          <img
+            src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"
+            alt="Field Watch & Minimalist EDC"
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
+      </section>
+
+      {/* New Arrivals Section */}
+      {newArrivals.length > 0 && (
+        <section className="space-y-6">
+          <div className="flex items-baseline justify-between border-b border-zinc-200 pb-3">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950">
+                New Arrivals
+              </h2>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                Fresh drops in tailored silhouettes and tactile living goods
+              </p>
+            </div>
+            <Link
+              href="/products?sort=discount-desc"
+              className="text-xs font-medium text-zinc-900 hover:text-zinc-500 flex items-center gap-1 transition-colors"
+            >
+              <span>Explore All</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {newArrivals.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Featured Showcase */}
+      <section className="space-y-6">
+        <div className="flex items-baseline justify-between border-b border-zinc-200 pb-3">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Featured Groceries
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-zinc-950">
+              The Essentials Collection
             </h2>
-            <p className="text-xs sm:text-sm text-gray-500">
-              Highest quality pantry and dairy products selected for you
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Heavyweight staples crafted for effortless daily rotation
             </p>
           </div>
           <Link
             href="/products"
-            className="text-xs sm:text-sm font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group"
+            className="text-xs font-medium text-zinc-900 hover:text-zinc-500 flex items-center gap-1 transition-colors"
           >
-            <span>Browse All ({PRODUCTS.length})</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <span>View All ({PRODUCTS.length})</span>
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -188,100 +238,48 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why Choose FreshKart Strip */}
-      <section className="rounded-3xl bg-white border border-emerald-100 p-6 sm:p-10 shadow-xs">
-        <div className="text-center max-w-xl mx-auto mb-8 space-y-2">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-            Why Shop with FreshKart?
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-500">
-            We partner directly with local farmers and verified dairies to ensure only the purest produce reaches your kitchen.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50/50">
-            <div className="p-3 rounded-xl bg-emerald-100 text-emerald-800 shrink-0">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-900">
-                100% Farm Fresh
-              </h3>
-              <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                Handpicked produce harvested within 24 hours of dispatch.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50/50">
-            <div className="p-3 rounded-xl bg-emerald-100 text-emerald-800 shrink-0">
-              <Truck className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-900">
-                30-Min Instant Delivery
-              </h3>
-              <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                Hyperlocal dark stores across your city ensure rapid door drop.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50/50">
-            <div className="p-3 rounded-xl bg-emerald-100 text-emerald-800 shrink-0">
-              <Percent className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-900">
-                Best Market Prices
-              </h3>
-              <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                Zero middlemen markups. Enjoy wholesale rates every day.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 rounded-2xl bg-emerald-50/50">
-            <div className="p-3 rounded-xl bg-emerald-100 text-emerald-800 shrink-0">
-              <RotateCcw className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-900">
-                No-Questions Return
-              </h3>
-              <p className="text-xs text-gray-500 mt-1 leading-relaxed">
-                Not satisfied with freshness? Instant replacement or refund.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Best Sellers Section */}
-      <section className="space-y-5">
-        <div className="flex items-end justify-between">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
-              Best Sellers
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-500">
-              Daily favorites trusted by thousands of neighborhood households
+      {/* Brand Values & Guarantees */}
+      <section className="rounded-2xl border border-zinc-200 bg-white p-8 sm:p-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="space-y-2">
+            <Award className="w-5 h-5 text-zinc-900" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-950">
+              Curated Manufacturing
+            </h3>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Every garment and accessory is vetted for stitch density, fabric weight, and endurance.
             </p>
           </div>
-          <Link
-            href="/products?sort=rating-desc"
-            className="text-xs sm:text-sm font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1 group"
-          >
-            <span>Top Rated</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
-        </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {bestSellers.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
+          <div className="space-y-2">
+            <Truck className="w-5 h-5 text-zinc-900" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-950">
+              Complimentary Shipping
+            </h3>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Orders over ₹1,499 ship free with end-to-end doorstep tracking.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <ShieldCheck className="w-5 h-5 text-zinc-900" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-950">
+              Reliable Dropshipping
+            </h3>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Direct fulfilment partnerships ensure honest pricing without middleman retail markup.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <RotateCcw className="w-5 h-5 text-zinc-900" />
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-950">
+              7-Day Hassle-Free Returns
+            </h3>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Not the right fit? Simple exchanges and straightforward return assistance.
+            </p>
+          </div>
         </div>
       </section>
     </div>

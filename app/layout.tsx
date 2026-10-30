@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
@@ -8,25 +8,26 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 
-const poppins = Poppins({
-  variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "FreshKart - Daily Farm Fresh Groceries Online",
+  title: "ATELIER — Modern Fashion, Accessories & Lifestyle Dropshipping",
   description:
-    "Order handpicked fruits, fresh vegetables, pure dairy, staples and daily grocery essentials with superfast 30-min doorstep delivery.",
-  keywords: ["groceries", "fresh produce", "vegetables", "fruits", "dairy", "online grocery store", "FreshKart"],
+    "Curated collection of heavyweight organic clothing, minimalist streetwear, timepieces, leather goods, and functional everyday lifestyle accessories.",
+  keywords: [
+    "clothing",
+    "streetwear",
+    "hoodies",
+    "minimalist accessories",
+    "lifestyle",
+    "online store",
+    "dropshipping",
+  ],
 };
 
 export default function RootLayout({
@@ -35,8 +36,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
-      <body className="min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen flex flex-col bg-zinc-50/50 text-zinc-900 antialiased selection:bg-zinc-900 selection:text-white">
         <ToastProvider>
           <WishlistProvider>
             <CartProvider>

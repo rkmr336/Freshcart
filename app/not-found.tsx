@@ -1,38 +1,27 @@
 import Link from "next/link";
-import { Search, Home } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 export default function GlobalNotFound() {
   return (
-    <div className="py-20 text-center max-w-md mx-auto space-y-4">
-      <div className="w-24 h-24 rounded-full bg-emerald-50 text-5xl flex items-center justify-center mx-auto shadow-inner">
-        🛒
-      </div>
-      <span className="inline-block text-xs font-bold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
-        404 Page Not Found
+    <div className="py-28 text-center max-w-md mx-auto space-y-4">
+      <span className="text-[10px] uppercase tracking-widest font-semibold text-zinc-400">
+        404
       </span>
-      <h1 className="text-3xl font-extrabold text-gray-900">
-        Lost in the Aisles?
+      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-950">
+        Page Not Found
       </h1>
-      <p className="text-sm text-gray-500 leading-relaxed">
-        The grocery shelf you are trying to visit does not exist or has been rearranged.
+      <p className="text-xs text-zinc-500 leading-relaxed font-normal">
+        The page you are looking for does not exist or has been relocated.
       </p>
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-3">
+      <div className="pt-2">
         <Link
           href="/"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all shadow-sm min-h-[44px]"
+          className="inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white font-medium text-xs px-5 py-2.5 rounded-lg transition-colors"
         >
-          <Home className="w-4 h-4" />
-          <span>Go to FreshKart Home</span>
-        </Link>
-        <Link
-          href="/products"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-xs px-5 py-3 rounded-xl transition-all min-h-[44px]"
-        >
-          <Search className="w-4 h-4" />
-          <span>Browse Groceries</span>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Return to Atelier Home</span>
         </Link>
       </div>
     </div>
   );
 }
-

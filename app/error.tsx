@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertCircle, RefreshCcw, Home } from "lucide-react";
+import { RefreshCcw, ArrowLeft } from "lucide-react";
 
 export default function GlobalError({
   error,
@@ -12,37 +12,33 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("App error:", error);
+    console.error("Application error:", error);
   }, [error]);
 
   return (
-    <div className="py-20 text-center max-w-md mx-auto space-y-4">
-      <div className="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto shadow-inner">
-        <AlertCircle className="w-8 h-8" />
-      </div>
-      <h2 className="text-2xl font-bold text-gray-900">
-        Something went wrong!
+    <div className="py-24 text-center max-w-md mx-auto space-y-4">
+      <h2 className="text-2xl font-semibold tracking-tight text-zinc-950">
+        Something went wrong
       </h2>
-      <p className="text-xs sm:text-sm text-gray-500">
-        We encountered an unexpected error while loading this grocery aisle.
+      <p className="text-xs text-zinc-500">
+        An unexpected error occurred while loading this view.
       </p>
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+      <div className="flex items-center justify-center gap-3 pt-2">
         <button
           onClick={() => reset()}
-          className="inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-5 py-3 rounded-xl transition-all shadow-sm min-h-[44px]"
+          className="inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white font-medium text-xs px-4 py-2.5 rounded-lg transition-colors"
         >
-          <RefreshCcw className="w-4 h-4" />
+          <RefreshCcw className="w-3.5 h-3.5" />
           <span>Try Again</span>
         </button>
         <Link
           href="/"
-          className="inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-xs px-5 py-3 rounded-xl transition-all min-h-[44px]"
+          className="inline-flex items-center justify-center gap-2 bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 font-medium text-xs px-4 py-2.5 rounded-lg transition-colors"
         >
-          <Home className="w-4 h-4" />
-          <span>Return Home</span>
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Home</span>
         </Link>
       </div>
     </div>
   );
 }
-

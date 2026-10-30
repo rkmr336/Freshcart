@@ -23,7 +23,9 @@ export default function OrderSuccessPageContent() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("freshkart_recent_order");
+      const stored =
+        localStorage.getItem("atelier_recent_order") ||
+        localStorage.getItem("freshkart_recent_order");
       if (stored) {
         const parsed: OrderDetails = JSON.parse(stored);
         if (!orderIdFromUrl || parsed.orderId === orderIdFromUrl) {
@@ -41,27 +43,23 @@ export default function OrderSuccessPageContent() {
   if (loading) {
     return (
       <div className="py-20 text-center">
-        <div className="inline-block w-8 h-8 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+        <div className="inline-block w-6 h-6 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
-  // Redirect to home if no order exists
   if (!order) {
     return (
       <div className="py-20 text-center max-w-md mx-auto space-y-4">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 text-3xl flex items-center justify-center mx-auto">
-          📦
-        </div>
-        <h2 className="text-xl font-bold text-gray-900">No Recent Order Found</h2>
-        <p className="text-xs text-gray-500">
-          Looks like you haven&apos;t placed any recent grocery orders.
+        <h2 className="text-xl font-semibold text-zinc-950">No Order Found</h2>
+        <p className="text-xs text-zinc-500">
+          We could not locate any active recent order details.
         </p>
         <Link
           href="/"
-          className="inline-block bg-emerald-600 text-white font-bold text-xs px-5 py-3 rounded-xl hover:bg-emerald-700"
+          className="inline-block bg-zinc-950 text-white font-medium text-xs px-5 py-2.5 rounded-lg hover:bg-zinc-800"
         >
-          Return to Home
+          Return to Atelier
         </Link>
       </div>
     );
@@ -69,120 +67,128 @@ export default function OrderSuccessPageContent() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 py-4 sm:py-8">
-      {/* Success Hero Header */}
-      <div className="text-center space-y-3 bg-white rounded-3xl border border-emerald-100 p-8 shadow-xs">
-        <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-inner animate-in zoom-in">
-          <CheckCircle2 className="w-10 h-10" />
+      {/* Success Box */}
+      <div className="text-center space-y-3 bg-white rounded-2xl border border-zinc-200 p-8">
+        <div className="w-12 h-12 rounded-full bg-zinc-100 text-zinc-950 flex items-center justify-center mx-auto">
+          <CheckCircle2 className="w-6 h-6" />
         </div>
 
-        <span className="inline-block text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-          Order Confirmed & Placed!
+        <span className="inline-block text-[10px] uppercase tracking-widest font-semibold text-zinc-500 bg-zinc-100 px-3 py-1 rounded">
+          Order Confirmed
         </span>
 
-        <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">
-          Thank you, {order.customerName}!
+        <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-950">
+          Thank you, {order.customerName}
         </h1>
 
-        <p className="text-xs sm:text-sm text-gray-600 max-w-md mx-auto">
-          We received your grocery order. Our harvest team is packing your fresh items in temperature-controlled bags.
+        <p className="text-xs sm:text-sm text-zinc-600 max-w-md mx-auto font-normal">
+          Your order has been routed to our direct fulfilment warehouse. A shipment confirmation with live tracking will be delivered to your inbox.
         </p>
 
         <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
-          <div className="bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-1.5 text-xs">
-            <span className="text-gray-400">Order ID: </span>
-            <strong className="text-gray-900 font-mono">{order.orderId}</strong>
+          <div className="bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-1.5 text-xs">
+            <span className="text-zinc-400">Order Reference: </span>
+            <strong className="text-zinc-950 font-mono">{order.orderId}</strong>
           </div>
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-1.5 text-xs text-emerald-800 font-semibold flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-emerald-600" />
+          <div className="bg-zinc-50 border border-zinc-200 rounded-lg px-3.5 py-1.5 text-xs text-zinc-800 font-medium flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-zinc-600" />
             <span>ETA: {order.estimatedDelivery}</span>
           </div>
         </div>
       </div>
 
-      {/* Order Status Cards */}
-      <div className="bg-white rounded-2xl border border-emerald-100 p-5 sm:p-6 shadow-xs space-y-6">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider pb-3 border-b border-gray-100 flex items-center gap-2">
-          <Package className="w-4 h-4 text-emerald-600" />
-          <span>Items Ordered ({order.items.length})</span>
+      {/* Ordered Items */}
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 sm:p-6 space-y-6">
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-900 pb-3 border-b border-zinc-100 flex items-center gap-2">
+          <Package className="w-4 h-4 text-zinc-700" />
+          <span>Items in Shipment ({order.items.length})</span>
         </h3>
 
-        <div className="divide-y divide-gray-100">
-          {order.items.map((item) => (
+        <div className="divide-y divide-zinc-100">
+          {order.items.map((item, idx) => (
             <div
-              key={item.id}
+              key={`${item.id}-${idx}`}
               className="py-3 first:pt-0 flex items-center justify-between gap-3 text-xs"
             >
               <div className="flex items-center gap-3">
-                <span className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-xl shrink-0">
-                  {item.emoji}
-                </span>
+                {item.image ? (
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-12 h-14 object-cover rounded bg-zinc-100 border border-zinc-200 shrink-0"
+                  />
+                ) : (
+                  <span className="w-12 h-14 rounded bg-zinc-100 flex items-center justify-center text-lg shrink-0">
+                    {item.emoji || "📦"}
+                  </span>
+                )}
                 <div>
-                  <p className="font-bold text-gray-900">{item.name}</p>
-                  <p className="text-gray-400">
-                    {item.unit} &bull; Qty: {item.quantity}
+                  <p className="font-medium text-zinc-900">{item.name}</p>
+                  <p className="text-zinc-400 text-[11px]">
+                    Qty: {item.quantity} {item.selectedSize ? `• ${item.selectedSize}` : ""}
                   </p>
                 </div>
               </div>
-              <span className="font-bold text-emerald-950">
+              <span className="font-semibold text-zinc-950">
                 {formatPrice(item.price * item.quantity)}
               </span>
             </div>
           ))}
         </div>
 
-        {/* Financial Recap */}
-        <div className="pt-4 border-t border-gray-100 space-y-2 text-xs text-gray-600">
+        {/* Breakdown */}
+        <div className="pt-4 border-t border-zinc-100 space-y-2 text-xs text-zinc-600">
           <div className="flex justify-between">
             <span>Subtotal</span>
             <span>{formatPrice(order.subtotal)}</span>
           </div>
           {order.discount > 0 && (
-            <div className="flex justify-between text-emerald-700 font-semibold">
-              <span>Coupon Discount</span>
+            <div className="flex justify-between text-zinc-900 font-medium">
+              <span>Promotion</span>
               <span>-{formatPrice(order.discount)}</span>
             </div>
           )}
           <div className="flex justify-between">
-            <span>Delivery Fee</span>
+            <span>Shipping</span>
             <span>
-              {order.deliveryFee === 0 ? "FREE" : formatPrice(order.deliveryFee)}
+              {order.deliveryFee === 0 ? "Complimentary" : formatPrice(order.deliveryFee)}
             </span>
           </div>
-          <div className="pt-2 border-t border-gray-200 flex justify-between text-sm sm:text-base font-extrabold text-gray-900">
-            <span>Paid Amount ({order.paymentMethod.toUpperCase()})</span>
-            <span className="text-emerald-700">{formatPrice(order.total)}</span>
+          <div className="pt-2 border-t border-zinc-200 flex justify-between text-sm sm:text-base font-semibold text-zinc-950">
+            <span>Total Paid ({order.paymentMethod.toUpperCase()})</span>
+            <span>{formatPrice(order.total)}</span>
           </div>
         </div>
       </div>
 
-      {/* Delivery Destination Card */}
-      <div className="bg-white rounded-2xl border border-emerald-100 p-5 shadow-xs space-y-2 text-xs">
-        <h4 className="font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5 text-xs">
-          <MapPin className="w-4 h-4 text-emerald-600" />
-          <span>Delivery Details</span>
+      {/* Address Details */}
+      <div className="bg-white rounded-xl border border-zinc-200 p-5 space-y-2 text-xs">
+        <h4 className="font-semibold uppercase tracking-wider text-zinc-900 flex items-center gap-1.5 text-[11px]">
+          <MapPin className="w-4 h-4 text-zinc-700" />
+          <span>Delivery Address</span>
         </h4>
-        <p className="text-gray-700 leading-relaxed">
+        <p className="text-zinc-700 leading-relaxed font-normal">
           {order.address}, {order.city} - {order.pincode}
         </p>
-        <p className="text-gray-500">
-          Phone: +91 {order.phone} &bull; Slot: {order.deliverySlot}
+        <p className="text-zinc-500">
+          Phone: +91 {order.phone} &bull; Service: {order.deliverySlot}
         </p>
       </div>
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
         <Link
-          href="/"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-6 py-3.5 rounded-2xl shadow-sm transition-all min-h-[44px]"
+          href="/products"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-zinc-950 hover:bg-zinc-800 text-white font-medium text-xs px-6 py-3 rounded-xl transition-all min-h-[44px]"
         >
           <ShoppingBag className="w-4 h-4" />
-          <span>Order More Fresh Items</span>
+          <span>Continue Shopping</span>
         </Link>
         <Link
-          href="/products"
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 font-bold text-xs px-6 py-3.5 rounded-2xl transition-colors min-h-[44px]"
+          href="/"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 font-medium text-xs px-6 py-3 rounded-xl transition-colors min-h-[44px]"
         >
-          <span>Explore All Categories</span>
+          <span>Return Home</span>
           <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

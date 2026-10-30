@@ -1,12 +1,12 @@
 import { CartItem } from "@/types";
 
-export const FREE_DELIVERY_THRESHOLD = 499;
-export const STANDARD_DELIVERY_FEE = 40;
-export const VALID_COUPON_CODE = "FRESH10";
+export const FREE_DELIVERY_THRESHOLD = 1499;
+export const STANDARD_DELIVERY_FEE = 99;
+export const VALID_COUPON_CODE = "STUDIO10";
 export const COUPON_DISCOUNT_PERCENT = 10;
 
 /**
- * Formats a numeric value to Indian Rupee (₹) format
+ * Formats a numeric value to currency format (INR ₹)
  */
 export function formatPrice(amount: number): string {
   return new Intl.NumberFormat("en-IN", {
@@ -41,7 +41,8 @@ export function calculateCartTotals(items: CartItem[], couponCode: string | null
   const mrpSavings = Math.max(0, totalMrp - subtotal);
 
   const isCouponApplied =
-    couponCode?.trim().toUpperCase() === VALID_COUPON_CODE;
+    couponCode?.trim().toUpperCase() === VALID_COUPON_CODE ||
+    couponCode?.trim().toUpperCase() === "FRESH10";
 
   const couponDiscount = isCouponApplied
     ? Math.round((subtotal * COUPON_DISCOUNT_PERCENT) / 100)
@@ -78,10 +79,9 @@ export function calculateCartTotals(items: CartItem[], couponCode: string | null
 }
 
 /**
- * Generates an authentic order reference ID e.g. "FK-83921"
+ * Generates an authentic order reference ID e.g. "ORD-94821"
  */
 export function generateOrderId(): string {
   const randomNum = Math.floor(10000 + Math.random() * 90000);
-  return `FK-${randomNum}`;
+  return `ORD-${randomNum}`;
 }
-

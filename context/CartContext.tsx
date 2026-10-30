@@ -7,11 +7,29 @@ import { useToast } from "./ToastContext";
 
 interface CartContextType {
   cart: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  addToCart: (
+    product: Product,
+    quantity?: number,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => void;
+  updateQuantity: (
+    productId: string,
+    quantity: number,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => void;
+  removeFromCart: (
+    productId: string,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => void;
   clearCart: () => void;
-  getItemQuantity: (productId: string) => number;
+  getItemQuantity: (
+    productId: string,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => number;
   isCartDrawerOpen: boolean;
   setIsCartDrawerOpen: (open: boolean) => void;
   couponCode: string | null;
@@ -22,8 +40,8 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const CART_STORAGE_KEY = "freshkart_cart_v1";
-const COUPON_STORAGE_KEY = "freshkart_coupon_v1";
+const CART_STORAGE_KEY = "atelier_cart_v2";
+const COUPON_STORAGE_KEY = "atelier_coupon_v2";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -32,7 +50,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const { showToast } = useToast();
 
-  // Guard localStorage access to prevent SSR hydration mismatch
   useEffect(() => {
     try {
       const storedCart = localStorage.getItem(CART_STORAGE_KEY);
@@ -50,7 +67,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Save changes to storage after initial load
   useEffect(() => {
     if (!isLoaded) return;
     try {
@@ -73,45 +89,98 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [couponCode, isLoaded]);
 
-  const addToCart = (product: Product, quantity = 1) => {
+  const addToCart = (
+    product: Product,
+    quantity = 1,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => {
     if (!product.inStock) {
       showToast(`${product.name} is currently out of stock`, "error");
       return;
     }
 
+    const defaultSize = selectedSize || (product.sizes ? product.sizes[0] : undefined);
+    const defaultColor = selectedColor || (product.colors ? product.colors[0].name : undefined);
+
     setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id
+      const existingIndex = prev.findIndex(
+        (item) =>
+          item.product.id === product.id &&
+          item.selectedSize === defaultSize &&
+          item.selectedColor === defaultColor
+      );
+
+      if (existingIndex > -1) {
+        return prev.map((item, idx) =>
+          idx === existingIndex
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prev, { product, quantity }];
+
+      return [
+        ...prev,
+        {
+          product,
+          quantity,
+          selectedSize: defaultSize,
+          selectedColor: defaultColor,
+        },
+      ];
     });
 
     showToast(`Added ${product.name} to cart`, "success");
     setIsCartDrawerOpen(true);
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = (
+    productId: string,
+    quantity: number,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, selectedSize, selectedColor);
       return;
     }
+
     setCart((prev) =>
-      prev.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      )
+      prev.map((item) => {
+        const isMatch =
+          item.product.id === productId &&
+          (selectedSize ? item.selectedSize === selectedSize : true) &&
+          (selectedColor ? item.selectedColor === selectedColor : true);
+        return isMatch ? { ...item, quantity } : item;
+      })
     );
   };
 
-  const removeFromCart = (productId: string) => {
-    const item = cart.find((i) => i.product.id === productId);
-    setCart((prev) => prev.filter((item) => item.product.id !== productId));
+  const removeFromCart = (
+    productId: string,
+    selectedSize?: string,
+    selectedColor?: string
+  ) => {
+    const item = cart.find(
+      (i) =>
+        i.product.id === productId &&
+        (selectedSize ? i.selectedSize === selectedSize : true) &&
+        (selectedColor ? i.selectedColor === selectedColor : true)
+    );
+
+    setCart((prev) =>
+      prev.filter(
+        (i) =>
+          !(
+            i.product.id === productId &&
+            (selectedSize ? i.selectedSize === selectedSize : true) &&
+            (selectedColor ? i.selectedColor === selectedColor : true)
+          )
+      )
+    );
+
     if (item) {
-      showToast(`Removed ${item.product.name} from cart`, "info");
+      showToast(`Removed ${item.product.name} from bag`, "info");
     }
   };
 
@@ -120,30 +189,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setCouponCode(null);
   };
 
-  const getItemQuantity = (productId: string): number => {
-    const item = cart.find((i) => i.product.id === productId);
-    return item ? item.quantity : 0;
+  const getItemQuantity = (
+    productId: string,
+    selectedSize?: string,
+    selectedColor?: string
+  ): number => {
+    const matching = cart.filter(
+      (i) =>
+        i.product.id === productId &&
+        (selectedSize ? i.selectedSize === selectedSize : true) &&
+        (selectedColor ? i.selectedColor === selectedColor : true)
+    );
+    return matching.reduce((sum, item) => sum + item.quantity, 0);
   };
 
   const applyCoupon = (code: string) => {
     const cleanCode = code.trim().toUpperCase();
     if (!cleanCode) {
-      return { success: false, message: "Please enter a coupon code" };
+      return { success: false, message: "Please enter a promo code" };
     }
-    if (cleanCode === VALID_COUPON_CODE) {
+    if (cleanCode === VALID_COUPON_CODE || cleanCode === "FRESH10") {
       setCouponCode(cleanCode);
-      showToast("Coupon FRESH10 applied! 10% discount added.", "success");
-      return { success: true, message: "Coupon FRESH10 applied successfully!" };
+      showToast(`Promo ${cleanCode} applied! 10% discount deducted.`, "success");
+      return { success: true, message: `Code ${cleanCode} applied successfully.` };
     }
     return {
       success: false,
-      message: "Invalid coupon code. Try FRESH10 for 10% off.",
+      message: `Invalid code. Try ${VALID_COUPON_CODE} for 10% off.`,
     };
   };
 
   const removeCoupon = () => {
     setCouponCode(null);
-    showToast("Coupon removed", "info");
+    showToast("Promo code removed", "info");
   };
 
   const totals = calculateCartTotals(cart, couponCode);
@@ -177,4 +255,3 @@ export function useCart(): CartContextType {
   }
   return context;
 }
-

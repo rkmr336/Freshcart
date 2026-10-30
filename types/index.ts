@@ -1,53 +1,63 @@
-export type CategoryId =
-  | "fruits"
-  | "vegetables"
-  | "dairy-eggs"
-  | "atta-rice-dal"
-  | "snacks"
-  | "beverages"
-  | "bakery"
-  | "household";
-
 export interface Category {
   id: string;
   name: string;
   slug: string;
-  icon: string;
   description: string;
+  image: string;
+  tagline?: string;
   itemCount?: number;
+}
+
+export interface ProductColor {
+  name: string;
+  hex: string;
 }
 
 export interface Product {
   id: string;
   slug: string;
   name: string;
-  category: string; // matches Category.name or Category.slug
+  category: string;
   categorySlug: string;
-  emoji: string;
-  price: number; // current selling price in INR
-  mrp: number; // original price in INR (mrp >= price)
-  unit: string; // e.g., "1 kg", "500 g", "1 L", "6 pcs"
-  rating: number; // 3.5 - 5.0
+  price: number;
+  mrp: number;
+  rating: number;
   reviewCount: number;
   description: string;
   inStock: boolean;
   tags: string[];
   isFeatured?: boolean;
   isBestSeller?: boolean;
+  isNewArrival?: boolean;
+  // Modern Dropshipping additions
+  image: string;
+  gallery?: string[];
+  sizes?: string[]; // e.g. ["S", "M", "L", "XL"]
+  colors?: ProductColor[]; // e.g. [{ name: "Onyx Black", hex: "#111827" }]
+  material?: string;
+  details?: string[];
+  badge?: string; // e.g. "Trending", "Limited", "Best Seller"
+  unit?: string; // backwards compatibility
+  emoji?: string; // backwards compatibility
 }
 
 export interface CartItem {
   product: Product;
   quantity: number;
+  selectedSize?: string;
+  selectedColor?: string;
 }
 
 export interface OrderItem {
   id: string;
   name: string;
-  emoji: string;
-  unit: string;
+  image: string;
   price: number;
   quantity: number;
+  selectedSize?: string;
+  selectedColor?: string;
+  unit?: string;
+  emoji?: string;
 }
 
 export interface OrderDetails {
@@ -75,4 +85,3 @@ export type SortOption =
   | "price-desc"
   | "rating-desc"
   | "discount-desc";
-
